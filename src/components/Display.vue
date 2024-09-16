@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, Ref, watch, reactive, computed } from "vue";
+import { ref, Ref, watch, reactive } from "vue";
 import SymbolSelector from "./SymbolSelector.vue";
-import { UpdateStatusPayload, UpdateColorPayload } from "./SymbolSelector.vue";
+import { UpdateStylePayload, UpdateColorPayload } from "./SymbolSelector.vue";
 
 import { Decorator, blankPara } from "../helpers/Decorator.ts";
+import { SymbolTable, SymbolMarks } from "../helpers/ColorTable.ts";
 
 const rawStr: Ref<string> = ref("これは▲文字▲を\n●記号●で■装飾■できる\n\nツールです。");
 
@@ -11,16 +12,7 @@ const fontSize: Ref<number> = ref(10.5);
 const markup: Ref<string> = ref("");
 const plain: Ref<string> = ref("");
 
-const SYMBOLS = reactive([
-  { symbol: "●", color: "Yellow", italic: false, bold: false },
-  { symbol: "▲", color: "Cyan", italic: false, bold: false },
-  { symbol: "■", color: "Lime", italic: false, bold: false },
-  { symbol: "★", color: "Pink", italic: false, bold: false },
-]);
-
-const colors: Ref<string[]> = computed(() => {
-  return ["Yellow", "Cyan", "Lime", "Pink"];
-});
+const symbolTable = reactive(SymbolTable());
 
 const toEntry = (s: string): string => {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -31,7 +23,7 @@ const reset = () => {
   plain.value = "";
 };
 
-const format = () => {
+const executeFormat = () => {
   reset();
   rawStr.value
     .split(/\n/)
@@ -43,8 +35,9 @@ const format = () => {
         return;
       }
       const de = new Decorator(line);
-      SYMBOLS.forEach((sym) => {
-        de.decorate(sym.symbol, sym.color, sym.italic, sym.bold);
+      SymbolMarks.forEach((m) => {
+        const info = symbolTable.get(m)!;
+        de.decorate(m, info.color, info.italic, info.bold);
       });
       markup.value += de.getMarkupText(fontSize.value);
       plain.value += de.getPlainText();
@@ -53,12 +46,12 @@ const format = () => {
 
 const copyStatus: Ref<boolean> = ref(false);
 
-watch([rawStr, SYMBOLS, fontSize], () => {
+watch([rawStr, symbolTable, fontSize], () => {
   copyStatus.value = false;
 });
 
 const copyToClipboard = () => {
-  format();
+  executeFormat();
 
   const blobHtml = new Blob([markup.value], { type: "text/html" });
   const blobText = new Blob([plain.value], { type: "text/plain" });
@@ -77,25 +70,25 @@ const copyToClipboard = () => {
   );
 };
 
-const onStatusUpdated = (payload: UpdateStatusPayload) => {
-  const t = SYMBOLS.filter((z) => z.symbol == payload.symbol)[0];
-  if (payload.style == "italic") {
-    t.italic = payload.status;
-  }
-  if (payload.style == "bold") {
-    t.bold = payload.status;
+const onStatusUpdated = (payload: UpdateStylePayload) => {
+  const target = symbolTable.get(payload.symbol);
+  if (target) {
+    target.italic = payload.italic;
+    target.bold = payload.bold;
   }
 };
 
 const onColorSelected = (payload: UpdateColorPayload) => {
-  const t = SYMBOLS.filter((z) => z.symbol == payload.symbol)[0];
-  t.color = payload.color;
+  const target = symbolTable.get(payload.symbol);
+  if (target) {
+    target.color = payload.color;
+  }
 };
 </script>
 
 <template>
-  <div v-for="(s, idx) in SYMBOLS" :key="idx">
-    <symbol-selector :symbol="s.symbol" :color="s.color" :variation="colors" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
+  <div v-for="(sm, idx) in SymbolMarks" :key="idx">
+    <symbol-selector :symbol="sm" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
   </div>
   <label><input type="number" v-model="fontSize" step="0.5" />pt</label>
   <div class="ta"><textarea v-model="rawStr"></textarea></div>

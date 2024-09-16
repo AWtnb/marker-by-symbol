@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { ref, Ref, onMounted } from "vue";
+import { JpColor, SymbolColor, JpColorNames, ToHtmlColorName } from "../helpers/ColorTable.ts";
 
-const props = defineProps<{ symbol: string; color: string; variation: string[] }>();
+const props = defineProps<{ symbol: string }>();
 
 const isItalic: Ref<boolean> = ref(false);
 const isBold: Ref<boolean> = ref(false);
-const color: Ref<string> = ref(props.color);
+const color: Ref<string> = ref(SymbolColor.get(props.symbol) || JpColor.Transparent);
 
-export interface UpdateStatusPayload {
+export interface UpdateStylePayload {
   symbol: string;
-  style: "italic" | "bold";
-  status: boolean;
+  italic: boolean;
+  bold: boolean;
 }
 
 export interface UpdateColorPayload {
@@ -19,41 +20,37 @@ export interface UpdateColorPayload {
 }
 
 const emit = defineEmits<{
-  (e: "updateStatus", payload: UpdateStatusPayload): void;
+  (e: "updateStatus", payload: UpdateStylePayload): void;
   (e: "updateColor", payload: UpdateColorPayload): void;
 }>();
 
-const onItalicInput = () => {
+const onStyleUpdated = () => {
   emit("updateStatus", {
     symbol: props.symbol,
-    style: "italic",
-    status: isItalic.value,
+    italic: isItalic.value,
+    bold: isBold.value,
   });
 };
-const onBoldInput = () => {
-  emit("updateStatus", {
-    symbol: props.symbol,
-    style: "bold",
-    status: isBold.value,
-  });
-};
-const onColorSelected = () => {
+
+const setColor = () => {
   emit("updateColor", {
     symbol: props.symbol,
-    color: color.value,
+    color: ToHtmlColorName(color.value),
   });
 };
+
+onMounted(setColor);
 </script>
 
 <template>
   <div>{{ symbol }}</div>
-  <label><input type="checkbox" v-model="isItalic" @change="onItalicInput" />イタリック</label>
-  <label><input type="checkbox" v-model="isBold" @change="onBoldInput" />ボールド</label>
+  <label><input type="checkbox" v-model="isItalic" @change="onStyleUpdated" />イタリック</label>
+  <label><input type="checkbox" v-model="isBold" @change="onStyleUpdated" />ボールド</label>
   <label
-    ><select v-model="color" @change="onColorSelected">
-      <option v-for="(col, idx) in props.variation" :key="idx">
+    ><select v-model="color" @change="setColor">
+      <option v-for="(col, idx) in JpColorNames" :key="idx">
         {{ col }}
       </option></select
-    >色</label
+    ></label
   >
 </template>
