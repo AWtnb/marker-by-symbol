@@ -3,10 +3,10 @@ import { ref, Ref, watch, reactive } from "vue";
 import SymbolSelector from "./SymbolSelector.vue";
 import { UpdateStylePayload, UpdateColorPayload } from "./SymbolSelector.vue";
 
-import { Decorator, blankPara } from "../helpers/Decorator.ts";
+import { Decorator, BlankParagraphMarkup, SearchPattern, TrimSymbol } from "../helpers/Decorator.ts";
 import { SymbolTable, SymbolMarks } from "../helpers/ColorTable.ts";
 
-const rawStr: Ref<string> = ref("これは▲文字▲を\n●記号●で■装飾■できる\n\nツールです。");
+const rawStr: Ref<string> = ref("これは●文字●を\n▲記号▲で■装飾■できる\n\nツールです。");
 
 const fontSize: Ref<number> = ref(10.5);
 const markup: Ref<string> = ref("");
@@ -16,6 +16,15 @@ const symbolTable = reactive(SymbolTable());
 
 const toEntry = (s: string): string => {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+};
+
+const toPlainText = (s: string): string => {
+  let f = s;
+  SymbolMarks.forEach((mark) => {
+    const reg = new RegExp(SearchPattern(mark), "g");
+    f = f.replace(reg, TrimSymbol);
+  });
+  return f;
 };
 
 const reset = () => {
@@ -30,8 +39,7 @@ const executeFormat = () => {
     .map((s) => toEntry(s))
     .forEach((line: string) => {
       if (line.length < 1 || line.trim().length < 1) {
-        markup.value += blankPara;
-        plain.value += "\n";
+        markup.value += BlankParagraphMarkup;
         return;
       }
       const de = new Decorator(line);
@@ -40,8 +48,8 @@ const executeFormat = () => {
         de.decorate(m, info.color, info.italic, info.bold);
       });
       markup.value += de.getMarkupText(fontSize.value);
-      plain.value += de.getPlainText();
     });
+  plain.value = toPlainText(rawStr.value);
 };
 
 const copyStatus: Ref<boolean> = ref(false);
