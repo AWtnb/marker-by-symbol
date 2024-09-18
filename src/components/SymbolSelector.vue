@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Ref, onMounted } from "vue";
+import { ref, Ref, onMounted, computed } from "vue";
 import { JpColor, SymbolColor, JpColorNames, ToHtmlColorName } from "../helpers/ColorTable.ts";
 
 const props = defineProps<{ symbol: string }>();
@@ -24,6 +24,10 @@ const emit = defineEmits<{
   (e: "updateColor", payload: UpdateColorPayload): void;
 }>();
 
+const colorName: Ref<string> = computed(() => {
+  return ToHtmlColorName(color.value);
+});
+
 const onStyleUpdated = () => {
   emit("updateStatus", {
     symbol: props.symbol,
@@ -35,7 +39,7 @@ const onStyleUpdated = () => {
 const setColor = () => {
   emit("updateColor", {
     symbol: props.symbol,
-    color: ToHtmlColorName(color.value),
+    color: colorName.value,
   });
 };
 
@@ -43,7 +47,7 @@ onMounted(setColor);
 </script>
 
 <template>
-  <div>{{ symbol }}</div>
+  <div :style="{ background: colorName }">{{ symbol }}</div>
   <label><input type="checkbox" v-model="isItalic" @change="onStyleUpdated" />イタリック</label>
   <label><input type="checkbox" v-model="isBold" @change="onStyleUpdated" />ボールド</label>
   <label
