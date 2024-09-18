@@ -19,12 +19,10 @@ const toEntry = (s: string): string => {
 };
 
 const toPlainText = (s: string): string => {
-  let f = s;
-  SymbolMarks.forEach((mark) => {
+  return SymbolMarks.reduce((acc, mark) => {
     const reg = new RegExp(SearchPattern(mark), "g");
-    f = f.replace(reg, TrimSymbol);
-  });
-  return f;
+    return acc.replace(reg, TrimSymbol)
+  }, s)
 };
 
 const reset = () => {
