@@ -16,7 +16,7 @@ colorNameTable.set(JpColor.Transparent, "Transparent");
 export const JpColorNames: string[] = [...colorNameTable.keys()];
 
 export const ToHtmlColorName = (jpName: string): string => {
-    return colorNameTable.get(jpName) || "Transparent"
+  return colorNameTable.get(jpName) || "Transparent";
 };
 
 export const SymbolColor: Map<string, string> = new Map();
@@ -27,7 +27,7 @@ SymbolColor.set("★", JpColor.Magenta);
 
 export const SymbolMarks: string[] = Array.from(SymbolColor.keys());
 
-interface SymbolInfo {
+export interface SymbolInfo {
   color: string;
   italic: boolean;
   bold: boolean;
