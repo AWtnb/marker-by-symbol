@@ -68,7 +68,7 @@ const onColorSelected = (payload: UpdateColorPayload) => {
 </script>
 
 <template>
-  <div v-for="(sm, idx) in SymbolMarks" :key="idx">
+  <div v-for="(sm, idx) in SymbolMarks" :key="idx" class="options">
     <symbol-selector :symbol="sm" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
   </div>
   <label><input type="number" v-model="fontSize" step="0.5" />pt</label>
@@ -82,5 +82,9 @@ button.copied::after {
 }
 .ta textarea {
   min-height: 200px;
+  width: 400px;
+}
+.options {
+  display: flex;
 }
 </style>

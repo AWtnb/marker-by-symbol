@@ -52,9 +52,12 @@ onMounted(setColor);
   <label><input type="checkbox" v-model="isBold" @change="onStyleUpdated" />ボールド</label>
   <label
     ><select v-model="color" @change="setColor">
-      <option v-for="(col, idx) in JpColorNames" :key="idx">
+      <option v-for="(col, idx) in JpColorNames" :key="idx" :style="{ background: ToHtmlColorName(col) }">
         {{ col }}
       </option></select
     ></label
   >
 </template>
+
+<style scoped>
+</style>
