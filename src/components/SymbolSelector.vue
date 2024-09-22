@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, Ref, onMounted, computed } from "vue";
-import { JpColor, SymbolColor, JpColorNames, ToHtmlColorName } from "../helpers/ColorTable.ts";
+import { JpColor, SymbolDefaultColor, JpColorNames, ToHtmlColorName } from "../helpers/ColorTable.ts";
 
 const props = defineProps<{ symbol: string }>();
 
 const isItalic: Ref<boolean> = ref(false);
 const isBold: Ref<boolean> = ref(false);
-const color: Ref<string> = ref(SymbolColor.get(props.symbol) || JpColor.Transparent);
+const color: Ref<string> = ref(SymbolDefaultColor.get(props.symbol) || JpColor.Transparent);
 
 export interface UpdateStylePayload {
   symbol: string;

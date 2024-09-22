@@ -19,13 +19,13 @@ export const ToHtmlColorName = (jpName: string): string => {
   return colorNameTable.get(jpName) || "Transparent";
 };
 
-export const SymbolColor: Map<string, string> = new Map();
-SymbolColor.set("●", JpColor.Yellow);
-SymbolColor.set("▲", JpColor.Cyan);
-SymbolColor.set("■", JpColor.Lime);
-SymbolColor.set("★", JpColor.Magenta);
+export const SymbolDefaultColor: Map<string, string> = new Map();
+SymbolDefaultColor.set("●", JpColor.Yellow);
+SymbolDefaultColor.set("▲", JpColor.Cyan);
+SymbolDefaultColor.set("■", JpColor.Lime);
+SymbolDefaultColor.set("★", JpColor.Magenta);
 
-export const SymbolMarks: string[] = Array.from(SymbolColor.keys());
+export const SymbolMarks: string[] = Array.from(SymbolDefaultColor.keys());
 
 export interface SymbolInfo {
   color: string;
@@ -36,7 +36,7 @@ export interface SymbolInfo {
 export const SymbolTable = (): Map<string, SymbolInfo> => {
   const table: Map<string, SymbolInfo> = new Map();
   SymbolMarks.forEach((mark) => {
-    const col = SymbolColor.get(mark) || JpColor.Transparent;
+    const col = SymbolDefaultColor.get(mark) || JpColor.Transparent;
     table.set(mark, { color: col, italic: false, bold: false });
   });
   return table;
