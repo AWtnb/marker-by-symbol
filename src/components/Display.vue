@@ -6,7 +6,7 @@ import { UpdateStylePayload, UpdateColorPayload } from "./SymbolSelector.vue";
 import { ExecuteMarkup, ToPlainText } from "../helpers/Decorator.ts";
 import { SymbolTable, SymbolMarks } from "../helpers/ColorTable.ts";
 
-const rawStr: Ref<string> = ref("これは●文字●を\n▲記号▲で■装飾■できる\n\nツールです。");
+const rawStr: Ref<string> = ref("これは●文字●を\n▲記号▲で■装飾■できる\n\n★ツール★です。");
 
 const fontSize: Ref<number> = ref(10.5);
 const markup: Ref<string> = ref("");
@@ -68,23 +68,41 @@ const onColorSelected = (payload: UpdateColorPayload) => {
 </script>
 
 <template>
-  <div v-for="(sm, idx) in SymbolMarks" :key="idx" class="options">
-    <symbol-selector :symbol="sm" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
+  <div id="symbol-selectors">
+    <symbol-selector v-for="(sm, idx) in SymbolMarks" :key="idx" :symbol="sm" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
   </div>
-  <label><input type="number" v-model="fontSize" step="0.5" />pt</label>
-  <div class="ta"><textarea v-model="rawStr"></textarea></div>
-  <button type="button" @click="copyToClipboard" :class="{ copied: copyStatus }">COPY</button>
+  <div id="content"><textarea v-model="rawStr"></textarea></div>
+  <div id="controls">
+    <label><input type="number" v-model="fontSize" step="0.5" />pt</label>
+    <button type="button" @click="copyToClipboard" :class="{ copied: copyStatus }">COPY</button>
+  </div>
 </template>
 
 <style scoped>
 button.copied::after {
   content: "\2705";
 }
-.ta textarea {
+#content textarea {
   min-height: 200px;
-  width: 400px;
+  margin-bottom: 1em;
 }
-.options {
+#symbol-selectors {
+  display: flex;
+  padding-bottom: 1em;
+}
+#controls {
+  display: flex;
+  justify-content: space-between;
+}
+#controls label {
+  width: 50%;
+  align-items: center;
   display: flex;
 }
+/* #fontsize {
+  justify-content: end;
+}
+#fontsize input {
+  width: 60%;
+} */
 </style>

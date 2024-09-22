@@ -3,9 +3,12 @@ import Display from './components/Display.vue'
 </script>
 
 <template>
-  <Display/>
+  <main><Display/></main>
 </template>
 
 <style scoped>
+main {
+  width: 500px;
+}
 </style>
 

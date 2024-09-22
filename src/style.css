@@ -1,3 +1,5 @@
+@import "../node_modules/chota/dist/chota.min.css";
+
 :root {
   font-synthesis: none;
   text-rendering: optimizeLegibility;

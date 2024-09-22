@@ -47,17 +47,25 @@ onMounted(setColor);
 </script>
 
 <template>
-  <div :style="{ background: colorName }">{{ symbol }}</div>
-  <label><input type="checkbox" v-model="isItalic" @change="onStyleUpdated" />イタリック</label>
-  <label><input type="checkbox" v-model="isBold" @change="onStyleUpdated" />ボールド</label>
-  <label
-    ><select v-model="color" @change="setColor">
-      <option v-for="(col, idx) in JpColorNames" :key="idx" :style="{ background: ToHtmlColorName(col) }">
-        {{ col }}
-      </option></select
-    ></label
-  >
+  <div id="selector">
+    <div id="symbol" :style="{ background: colorName }">{{ symbol }}</div>
+    <label><input type="checkbox" v-model="isItalic" @change="onStyleUpdated" />イタリック</label>
+    <label><input type="checkbox" v-model="isBold" @change="onStyleUpdated" />ボールド</label>
+    <label
+      ><select v-model="color" @change="setColor">
+        <option v-for="(col, idx) in JpColorNames" :key="idx">
+          {{ col }}
+        </option></select
+      ></label
+    >
+  </div>
 </template>
 
 <style scoped>
+#symbol {
+  text-align: center;
+}
+#selector {
+  padding: 6px;
+}
 </style>
