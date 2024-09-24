@@ -66,6 +66,6 @@ onMounted(setColor);
   text-align: center;
 }
 #selector {
-  padding: 6px;
+  width: 24%;
 }
 </style>

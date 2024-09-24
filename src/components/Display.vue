@@ -68,10 +68,10 @@ const onColorSelected = (payload: UpdateColorPayload) => {
 </script>
 
 <template>
+  <div id="content"><textarea v-model="rawStr"></textarea></div>
   <div id="symbol-selectors">
     <symbol-selector v-for="(sm, idx) in SymbolMarks" :key="idx" :symbol="sm" @update-status="onStatusUpdated" @update-color="onColorSelected"></symbol-selector>
   </div>
-  <div id="content"><textarea v-model="rawStr"></textarea></div>
   <div id="controls">
     <label><input type="number" v-model="fontSize" step="0.5" />pt</label>
     <button type="button" @click="copyToClipboard" :class="{ copied: copyStatus }">COPY</button>
@@ -88,6 +88,7 @@ button.copied::after {
 }
 #symbol-selectors {
   display: flex;
+  justify-content: space-between;
   padding-bottom: 1em;
 }
 #controls {
@@ -99,10 +100,4 @@ button.copied::after {
   align-items: center;
   display: flex;
 }
-/* #fontsize {
-  justify-content: end;
-}
-#fontsize input {
-  width: 60%;
-} */
 </style>
